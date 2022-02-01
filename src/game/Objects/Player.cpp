@@ -12315,7 +12315,14 @@ void Player::PrepareGossipMenu(WorldObject* pSource, uint32 menuId)
 
     if (canSeeQuests)
         PrepareQuestMenu(pSource->GetObjectGuid());
-}
+    // 对话为鸟点NPC，增加雇佣兵入口
+    if (pSource->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_FLIGHTMASTER))
+        {
+            pMenu->GetGossipMenu().AddMenuItem(8, "我需要一个坦克", GetLevel()*200, 60, "",false);
+            pMenu->GetGossipMenu().AddMenuItem(8, "我需要一个DPS", GetLevel()*200, 61, "",false);
+            pMenu->GetGossipMenu().AddMenuItem(8, "我需要一个治疗", GetLevel()*200, 62, "",false);
+        };
+}       
 
 void Player::SendPreparedGossip(WorldObject* pSource)
 {
@@ -12366,7 +12373,6 @@ void Player::SendPreparedGossip(WorldObject* pSource)
 void Player::OnGossipSelect(WorldObject* pSource, uint32 gossipListId)
 {
     GossipMenu& gossipmenu = PlayerTalkClass->GetGossipMenu();
-
     if (gossipListId >= gossipmenu.MenuItemCount())
         return;
 
@@ -12385,7 +12391,6 @@ void Player::OnGossipSelect(WorldObject* pSource, uint32 gossipListId)
     }
 
     GossipMenuItemData pMenuData = gossipmenu.GetItemData(gossipListId);
-
     switch (gossipOptionId)
     {
         case GOSSIP_OPTION_GOSSIP:
@@ -12475,6 +12480,18 @@ void Player::OnGossipSelect(WorldObject* pSource, uint32 gossipListId)
             GetSession()->SendBattleGroundList(guid, bgTypeId);
             break;
         }
+        case 60:
+            PlayerTalkClass->CloseGossip();
+            ChatHandler(this).HandlePartyBotAddCommand("tank");
+            break;
+        case 61:
+            PlayerTalkClass->CloseGossip();
+            ChatHandler(this).HandlePartyBotAddCommand("dps");
+            break;
+        case 62:
+            PlayerTalkClass->CloseGossip();
+            ChatHandler(this).HandlePartyBotAddCommand("healer");
+            break;
     }
 
     if (pMenuData.m_gAction_script)

@@ -124,6 +124,37 @@ class ChatHandler
 
         void SendBanResult(BanMode mode, BanReturn result, std::string& banTarget, uint32 duration_secs, std::string& reason);
 
+        // Bots commandes
+        bool HandleBotAddAllCommand(char *);
+        bool HandleBotAddRandomCommand(char *args);
+        bool HandleBotAddCommand(char * args);
+        bool HandleBotDeleteCommand(char * args);
+        bool HandleBotInfoCommand(char * args);
+        bool HandleBotReloadCommand(char * args);
+        bool HandleBotStopCommand(char * args);
+        bool HandleBotStartCommand(char * args);
+        bool PartyBotAddRequirementCheck(Player const* pPlayer, Player const* pTarget);
+        bool HandlePartyBotAddCommand(char * args);
+        bool HandlePartyBotCloneCommand(char * args);
+        bool HandlePartyBotSetRoleCommand(char * args);
+        bool HandlePartyBotAttackStartCommand(char * args);
+        bool HandlePartyBotAttackStopCommand(char * args);
+        bool HandlePartyBotAoECommand(char * args);
+        bool HandlePartyBotControlMarkCommand(char * args);
+        bool HandlePartyBotFocusMarkCommand(char * args);
+        bool HandlePartyBotClearMarksCommand(char * args);
+        bool HandlePartyBotComeToMeCommand(char * args);
+        bool HandlePartyBotUseGObjectCommand(char * args);
+        bool HandlePartyBotPauseCommand(char * args);
+        bool HandlePartyBotUnpauseCommand(char * args);
+        bool HandlePartyBotRemoveCommand(char * args);
+        bool HandleBattleBotAddCommand(char* args, uint8 bg);
+        bool HandleBattleBotAddAlteracCommand(char* args);
+        bool HandleBattleBotAddArathiCommand(char* args);
+        bool HandleBattleBotAddWarsongCommand(char* args);
+        bool HandleBattleBotRemoveCommand(char* args);
+        bool HandleBattleBotShowPathCommand(char* args);
+        bool HandleBattleBotShowAllPathsCommand(char* args);
         /**
         * \brief Prepare SMSG_GM_MESSAGECHAT/SMSG_MESSAGECHAT
         *
@@ -245,7 +276,8 @@ class ChatHandler
         bool HandleGoWarsongCommand(char *);
         bool HandleGoArathiCommand(char *);
         bool HandleGoAlteracCommand(char*);
-        // Bots commandes
+            /**
+    // Bots commandes
         bool HandleBotAddAllCommand(char *);
         bool HandleBotAddRandomCommand(char *args);
         bool HandleBotAddCommand(char * args);
@@ -276,7 +308,7 @@ class ChatHandler
         bool HandleBattleBotRemoveCommand(char* args);
         bool HandleBattleBotShowPathCommand(char* args);
         bool HandleBattleBotShowAllPathsCommand(char* args);
-
+        **/
         // spell_disabled
         bool HandleReloadSpellDisabledCommand(char *args);
         // AutoBroadCast

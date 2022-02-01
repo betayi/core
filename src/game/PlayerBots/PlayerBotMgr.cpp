@@ -659,21 +659,21 @@ bool ChatHandler::PartyBotAddRequirementCheck(Player const* pPlayer, Player cons
 {
     if (pPlayer->IsTaxiFlying())
     {
-        SendSysMessage("Cannot add bots while flying.");
+        SendSysMessage("请落地后再雇佣!");
         return false;
     }
 
     // Spawning bots inside BG will cause server crash on BG end.
     if (pPlayer->InBattleGround())
     {
-        SendSysMessage("Cannot add bots inside battlegrounds.");
+        SendSysMessage("战场内不能雇佣!");
         return false;
     }
 
     if (pPlayer->GetGroup() && (pPlayer->GetGroup()->IsFull() || sWorld.getConfig(CONFIG_UINT32_PARTY_BOT_MAX_BOTS) &&
         (pPlayer->GetGroup()->GetMembersCount() - 1 >= sWorld.getConfig(CONFIG_UINT32_PARTY_BOT_MAX_BOTS))))
     {
-        SendSysMessage("Cannot add more bots. Group is full.");
+        SendSysMessage("队伍超限了,不能继续雇佣了.");
         return false;
     }
 
@@ -682,7 +682,7 @@ bool ChatHandler::PartyBotAddRequirementCheck(Player const* pPlayer, Player cons
         if (pMap->IsDungeon() &&
             pMap->GetPlayers().getSize() >= pMap->GetMapEntry()->maxPlayers)
         {
-            SendSysMessage("Cannot add more bots. Instance is full.");
+            SendSysMessage("队伍超限了,不能继续雇佣了.");
             return false;
         }
     }
@@ -698,19 +698,19 @@ bool ChatHandler::PartyBotAddRequirementCheck(Player const* pPlayer, Player cons
     {
         if (pPlayer->IsDead())
         {
-            SendSysMessage("Cannot add bots while dead.");
+            SendSysMessage("请在生存状态下雇佣");
             return false;
         }
 
         if (pPlayer->IsInCombat())
         {
-            SendSysMessage("Cannot add bots while in combat.");
+            SendSysMessage("战斗中无法雇佣");
             return false;
         }
 
         if (pPlayer->GetMap()->IsDungeon())
         {
-            SendSysMessage("Cannot add bots while inside instances.");
+            SendSysMessage("副本中无法雇佣");
             return false;
         }
 
@@ -759,8 +759,17 @@ bool ChatHandler::HandlePartyBotAddCommand(char* args)
         return false;
     }
 
+    uint32 money = pPlayer->GetMoney();
+    uint32 hirecost = pPlayer->GetLevel()*200;
+    if (money < hirecost)
+    {
+        PSendSysMessage("不够支付佣兵费用:%u银币", pPlayer->GetLevel()*2);
+        return false;
+    }
+
     uint8 botClass = 0;
-    uint32 botLevel = pPlayer->GetLevel();
+    uint32 plevel = pPlayer->GetLevel();
+    uint32 botLevel = (plevel>59) ? 60 : urand(plevel-1,plevel+1);
     CombatBotRoles botRole = ROLE_INVALID;
 
     if (char* arg1 = ExtractArg(&args))
@@ -822,10 +831,13 @@ bool ChatHandler::HandlePartyBotAddCommand(char* args)
 
     PartyBotAI* ai = new PartyBotAI(pPlayer, nullptr, botRole, botRace, botClass, botLevel, pPlayer->GetMapId(), pPlayer->GetMap()->GetInstanceId(), x, y, z, pPlayer->GetOrientation());
     if (sPlayerBotMgr.AddBot(ai))
-        SendSysMessage("New party bot added.");
+    {    
+        SendSysMessage("雇佣兵前来报道!");
+        pPlayer->ModifyMoney(-hirecost);
+    }
     else
     {
-        SendSysMessage("Error spawning bot.");
+        SendSysMessage("暂无可雇佣的人选");
         SetSentErrorMessage(true);
         return false;
     }
