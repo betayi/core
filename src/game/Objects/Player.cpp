@@ -18054,15 +18054,24 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc 
 
     if (GetPet())
         RemovePet(PET_SAVE_REAGENTS);
+    // Add InstantFlight Function By SpecialItem Equipped
+    if (HasItem(21540))
+    {
+        TaxiNodesEntry const* lastPathNode = sTaxiNodesStore.LookupEntry(nodes[nodes.size() - 1]);
+        m_taxi.ClearTaxiDestinations();
+        TeleportTo(lastPathNode->map_id, lastPathNode->x, lastPathNode->y, lastPathNode->z, GetOrientation());
+        return false;
+    }
+    else
+    {
+        WorldPacket data(SMSG_ACTIVATETAXIREPLY, 4);
+        data << uint32(ERR_TAXIOK);
+        GetSession()->SendPacket(&data);
 
-    WorldPacket data(SMSG_ACTIVATETAXIREPLY, 4);
-    data << uint32(ERR_TAXIOK);
-    GetSession()->SendPacket(&data);
+        DEBUG_LOG("WORLD: Sent SMSG_ACTIVATETAXIREPLY");
 
-    DEBUG_LOG("WORLD: Sent SMSG_ACTIVATETAXIREPLY");
-
-    GetSession()->SendDoFlight(mount_display_id, sourcepath);
-
+        GetSession()->SendDoFlight(mount_display_id, sourcepath);
+    }
     return true;
 }
 
