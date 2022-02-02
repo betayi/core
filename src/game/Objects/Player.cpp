@@ -18055,7 +18055,7 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc 
     if (GetPet())
         RemovePet(PET_SAVE_REAGENTS);
     // 瞬飞代码--(Beta.yi@qq.com)
-    if (HasItemWithIdEquipped(60000,1,EQUIPMENT_SLOT_BODY)||HasItemCount(60001,1,false))
+    if (CanInstantFlight())
     {
         TaxiNodesEntry const* lastPathNode = sObjectMgr.GetTaxiNodeEntry(nodes[nodes.size() - 1]);
         m_taxi.ClearTaxiDestinations();
@@ -18074,7 +18074,14 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc 
     }
     return true;
 }
-
+bool Player::CanInstantFlight() const
+{
+    if (HasItemWithIdEquipped(sWorld.getConfig(CONFIG_UINT32_INSTANT_FLIGHT_EQUIPMENT),1,EQUIPMENT_SLOT_END))
+        return true;
+    if (HasItemCount(sWorld.getConfig(CONFIG_UINT32_INSTANT_FLIGHT_ITEM),1,false))
+        return true;
+    return false;
+}
 bool Player::ActivateTaxiPathTo(uint32 taxi_path_id, uint32 spellid /*= 0*/, bool nocheck)
 {
     TaxiPathEntry const* entry = sTaxiPathStore.LookupEntry(taxi_path_id);

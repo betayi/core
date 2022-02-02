@@ -1145,6 +1145,10 @@ void World::LoadConfigSettings(bool reload)
     // Smartlog data
     sLog.InitSmartlogEntries(sConfig.GetStringDefault("Smartlog.ExtraEntries", ""));
     sLog.InitSmartlogGuids(sConfig.GetStringDefault("Smartlog.ExtraGuids", ""));
+
+    //InstantFlight data
+    setConfig(CONFIG_UINT32_INSTANT_FLIGHT_ITEM, "InstantFlight.Item",60001);
+    setConfig(CONFIG_UINT32_INSTANT_FLIGHT_EQUIPMENT, "InstantFlight.Eqiupment",60000);
 }
 
 void charactersDatabaseWorkerThread()

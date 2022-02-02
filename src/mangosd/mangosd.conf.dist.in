@@ -2874,3 +2874,15 @@ DynamicRespawn.AffectLevelBelow         = 0
 DynamicRespawn.PlayersThreshold         = 0
 DynamicRespawn.PlayersMaxLevelDiff      = 0
 
+############
+##
+#
+# InstantFlight.Item
+# 	Default: 60001 (Item In Inventory_Pack_Bag Enable InstantFlight)
+# InstantFlight.Eqiupment
+# 	Default: 60000 (Item Equipmended Enable InstantFlight)
+#
+############
+
+InstantFlight.Item 		= 60001
+InstantFlight.Eqiupment = 60000
