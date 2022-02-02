@@ -18054,10 +18054,10 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc 
 
     if (GetPet())
         RemovePet(PET_SAVE_REAGENTS);
-    // Add InstantFlight Function By SpecialItem Equipped
-    if (HasItem(21540))
+    // 瞬飞代码--(Beta.yi@qq.com)
+    if (HasItemWithIdEquipped(60000,1,EQUIPMENT_SLOT_BODY)||HasItemCount(60001,1,false))
     {
-        TaxiNodesEntry const* lastPathNode = sTaxiNodesStore.LookupEntry(nodes[nodes.size() - 1]);
+        TaxiNodesEntry const* lastPathNode = sObjectMgr.GetTaxiNodeEntry(nodes[nodes.size() - 1]);
         m_taxi.ClearTaxiDestinations();
         TeleportTo(lastPathNode->map_id, lastPathNode->x, lastPathNode->y, lastPathNode->z, GetOrientation());
         return false;
