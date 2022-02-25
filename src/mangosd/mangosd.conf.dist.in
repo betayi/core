@@ -2886,3 +2886,16 @@ DynamicRespawn.PlayersMaxLevelDiff      = 0
 
 InstantFlight.Item 		= 60001
 InstantFlight.Eqiupment = 60000
+
+############
+#
+#
+# XPrate.Item
+# 	Default: 60002 (Item In Inventory_Pack_Bag Enable XPrate)
+# XPrate.Percent
+# 	Default: 10 (XPrate Percent)
+#
+############
+
+XPrate.Item 	 = 60002
+XPrate.Percent 	 = 10

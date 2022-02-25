@@ -1146,9 +1146,11 @@ void World::LoadConfigSettings(bool reload)
     sLog.InitSmartlogEntries(sConfig.GetStringDefault("Smartlog.ExtraEntries", ""));
     sLog.InitSmartlogGuids(sConfig.GetStringDefault("Smartlog.ExtraGuids", ""));
 
-    //InstantFlight data
+    //Custom function item data
     setConfig(CONFIG_UINT32_INSTANT_FLIGHT_ITEM, "InstantFlight.Item",60001);
     setConfig(CONFIG_UINT32_INSTANT_FLIGHT_EQUIPMENT, "InstantFlight.Eqiupment",60000);
+    setConfig(CONFIG_UINT32_XPRATE_ITEM, "XPrate.Item",60002);
+    setConfig(CONFIG_UINT32_XPRATE_PERCENT, "XPrate.Percent",10);
 }
 
 void charactersDatabaseWorkerThread()

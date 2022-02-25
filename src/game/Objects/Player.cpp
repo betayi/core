@@ -3315,7 +3315,8 @@ void Player::GiveXP(uint32 xp, Unit* victim)
     uint32 curXP = GetUInt32Value(PLAYER_XP);
     uint32 nextLvlXP = GetUInt32Value(PLAYER_NEXT_LEVEL_XP);
     uint32 newXP = curXP + xp + rested_bonus_xp;
-
+    unit32 newPercent = GetItemCount(sWorld.getConfig(CONFIG_UINT32_XPRATE_ITEM)) * sWorld.getConfig(CONFIG_UINT32_XPRATE_PERCENT);
+    newXP = newXP * (100 + newPercent) / 100;
     while (newXP >= nextLvlXP && level < sWorld.getConfig(CONFIG_UINT32_MAX_PLAYER_LEVEL))
     {
         newXP -= nextLvlXP;
