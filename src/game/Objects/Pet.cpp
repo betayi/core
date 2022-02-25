@@ -1222,7 +1222,7 @@ void Pet::GivePetXP(uint32 xp)
     if (level >= maxlevel)
         return;
     // Pet XPrate
-    uint32 newPercent = GetOwner()->GetItemCount(sWorld.getConfig(CONFIG_UINT32_XPRATE_ITEM)) * sWorld.getConfig(CONFIG_UINT32_XPRATE_PERCENT);
+    uint32 newPercent = ((Player*)GetOwner())->GetItemCount(sWorld.getConfig(CONFIG_UINT32_XPRATE_ITEM)) * sWorld.getConfig(CONFIG_UINT32_XPRATE_PERCENT);
     xp = xp + xp * newPercent / 100;
 
     uint32 nextLvlXP = GetUInt32Value(UNIT_FIELD_PETNEXTLEVELEXP);
