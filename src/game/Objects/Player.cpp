@@ -3309,14 +3309,13 @@ void Player::GiveXP(uint32 xp, Unit* victim)
 
     // XP resting bonus for kill
     uint32 rested_bonus_xp = victim ? GetXPRestBonus(xp) : 0;
-
+    uint32 newPercent = GetItemCount(sWorld.getConfig(CONFIG_UINT32_XPRATE_ITEM)) * sWorld.getConfig(CONFIG_UINT32_XPRATE_PERCENT);
+    xp = xp + xp * newPercent / 100;
     SendLogXPGain(xp, victim, rested_bonus_xp);
 
     uint32 curXP = GetUInt32Value(PLAYER_XP);
     uint32 nextLvlXP = GetUInt32Value(PLAYER_NEXT_LEVEL_XP);
     uint32 newXP = curXP + xp + rested_bonus_xp;
-    uint32 newPercent = GetItemCount(sWorld.getConfig(CONFIG_UINT32_XPRATE_ITEM)) * sWorld.getConfig(CONFIG_UINT32_XPRATE_PERCENT);
-    newXP = newXP * (100 + newPercent) / 100;
     while (newXP >= nextLvlXP && level < sWorld.getConfig(CONFIG_UINT32_MAX_PLAYER_LEVEL))
     {
         newXP -= nextLvlXP;
