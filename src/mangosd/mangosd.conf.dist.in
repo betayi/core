@@ -2875,7 +2875,7 @@ DynamicRespawn.PlayersThreshold         = 0
 DynamicRespawn.PlayersMaxLevelDiff      = 0
 
 ############
-##
+# Description: Player get InstantFlight while have special item;
 #
 # InstantFlight.Item
 # 	Default: 60001 (Item In Inventory_Pack_Bag Enable InstantFlight)
@@ -2888,7 +2888,7 @@ InstantFlight.Item 		= 60001
 InstantFlight.Eqiupment = 60000
 
 ############
-#
+# Descripion: Player and Pet XPrate Modifier with special item;
 #
 # XPrate.Item
 # 	Default: 60002 (Item In Inventory_Pack_Bag Enable XPrate)
