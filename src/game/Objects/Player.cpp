@@ -12229,6 +12229,10 @@ void Player::PrepareGossipMenu(WorldObject* pSource, uint32 menuId)
                 case GOSSIP_OPTION_TAXIVENDOR:
                     if (GetSession()->SendLearnNewTaxiNode(pCreature))
                         pMenu->GetGossipMenu().SetDiscoveredNode();
+                    // 对话为鸟点NPC，增加雇佣兵入口
+                    pMenu->GetGossipMenu().AddMenuItem(8, "我需要一个坦克", GetLevel()*200, 60, "",false);
+                    pMenu->GetGossipMenu().AddMenuItem(8, "我需要一个DPS", GetLevel()*200, 61, "",false);
+                    pMenu->GetGossipMenu().AddMenuItem(8, "我需要一个治疗", GetLevel()*200, 62, "",false);
                     break;
                 case GOSSIP_OPTION_BATTLEFIELD:
                     if (!pCreature->CanInteractWithBattleMaster(this, false))
@@ -12314,13 +12318,6 @@ void Player::PrepareGossipMenu(WorldObject* pSource, uint32 menuId)
 
     if (canSeeQuests)
         PrepareQuestMenu(pSource->GetObjectGuid());
-    // 对话为鸟点NPC，增加雇佣兵入口
-    if (pSource->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_FLIGHTMASTER))
-        {
-            pMenu->GetGossipMenu().AddMenuItem(8, "我需要一个坦克", GetLevel()*200, 60, "",false);
-            pMenu->GetGossipMenu().AddMenuItem(8, "我需要一个DPS", GetLevel()*200, 61, "",false);
-            pMenu->GetGossipMenu().AddMenuItem(8, "我需要一个治疗", GetLevel()*200, 62, "",false);
-        };
 }       
 
 void Player::SendPreparedGossip(WorldObject* pSource)
