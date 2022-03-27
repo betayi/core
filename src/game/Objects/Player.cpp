@@ -12479,15 +12479,15 @@ void Player::OnGossipSelect(WorldObject* pSource, uint32 gossipListId)
         case 60:
             PlayerTalkClass->CloseGossip();
             ChatHandler(this).HandlePartyBotAddCommand("tank");
-            break;
+            return;
         case 61:
             PlayerTalkClass->CloseGossip();
             ChatHandler(this).HandlePartyBotAddCommand("dps");
-            break;
+            return;
         case 62:
             PlayerTalkClass->CloseGossip();
             ChatHandler(this).HandlePartyBotAddCommand("healer");
-            break;
+            return;
     }
 
     if (pMenuData.m_gAction_script)
