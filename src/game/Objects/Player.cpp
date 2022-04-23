@@ -12234,12 +12234,12 @@ void Player::PrepareGossipMenu(WorldObject* pSource, uint32 menuId)
                     pMenu->GetGossipMenu().AddMenuItem(8, "我需要一个坦克", GetLevel()*200, 60, "",false);
                     pMenu->GetGossipMenu().AddMenuItem(8, "我需要一个DPS", GetLevel()*200, 61, "",false);
                     pMenu->GetGossipMenu().AddMenuItem(8, "我需要一个治疗", GetLevel()*200, 62, "",false);
-                    pMenu->GetGossipMenu().AddMenuItem(8, "联盟战歌+1", GetLevel()*5, 63, "",false);
-                    pMenu->GetGossipMenu().AddMenuItem(8, "部落战歌+1", GetLevel()*5, 64, "",false);
                     break;
                 case GOSSIP_OPTION_BATTLEFIELD:
                     if (!pCreature->CanInteractWithBattleMaster(this, false))
                         hasMenuItem = false;
+                    pMenu->GetGossipMenu().AddMenuItem(8, "联盟战歌+1", GetLevel()*5, 63, "",false);
+                    pMenu->GetGossipMenu().AddMenuItem(8, "部落战歌+1", GetLevel()*5, 64, "",false);
                     break;
                 case GOSSIP_OPTION_STABLEPET:
                     if (GetClass() != CLASS_HUNTER)
@@ -12493,11 +12493,11 @@ void Player::OnGossipSelect(WorldObject* pSource, uint32 gossipListId)
             return;
         case 63:
             //PlayerTalkClass->CloseGossip();
-            ChatHandler(this).HandleBattleBotAddArathiCommand("alliance");
+            ChatHandler(this).HandleBattleBotAddWarsongCommand("alliance");
             return;
         case 64:
             //PlayerTalkClass->CloseGossip();
-            ChatHandler(this).HandleBattleBotAddArathiCommand("horde");
+            ChatHandler(this).HandleBattleBotAddWarsongCommand("horde");
             return;
     }
 
