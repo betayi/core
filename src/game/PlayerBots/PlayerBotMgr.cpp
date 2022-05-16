@@ -1543,9 +1543,9 @@ bool ChatHandler::HandleBattleBotAddCommand(char* args, uint8 bg)
         SetSentErrorMessage(true);
         return false;
     }
-
+    uint32 plevel = pPlayer->GetLevel();
     Team botTeam = HORDE;
-    uint32 botLevel = sWorld.getConfig(CONFIG_UINT32_MAX_PLAYER_LEVEL);
+    uint32 botLevel = (plevel>59) ? 60 : urand(plevel-1,plevel+1);
     std::string option;
     if (char* arg1 = ExtractArg(&args))
     {
