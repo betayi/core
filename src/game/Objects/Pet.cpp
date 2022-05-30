@@ -790,7 +790,7 @@ void Pet::LooseHappiness()
     uint32 curValue = GetPower(POWER_HAPPINESS);
     if (curValue <= 0)
         return;
-    int32 addvalue = (140 >> GetLoyaltyLevel()) * 125;      //value is 70/35/17/8/4 (per min) * 1000 / 8 (timer 7.5 secs)
+    int32 addvalue = (140 >> GetLoyaltyLevel()) * 20;      //value is 70/35/17/8/4 (per min) * 1000 / 8 (timer 7.5 secs)
     if (IsInCombat())                                       //we know in combat happiness fades faster, multiplier guess
         addvalue = int32(addvalue * 1.5);
     ModifyPower(POWER_HAPPINESS, -addvalue);
