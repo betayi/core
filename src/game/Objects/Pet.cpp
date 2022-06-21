@@ -275,9 +275,6 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petEntry, uint32 petNumber, bool c
     if (getPetType() == SUMMON_PET)
         petlevel = owner->GetLevel();
 
-    if (owner->IsPvP())
-        SetPvP(true);
-
     SetCanModifyStats(true);
     InitStatsForLevel(petlevel);
     SetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP, uint32(time(nullptr)));
@@ -386,6 +383,9 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petEntry, uint32 petNumber, bool c
         else
             RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
     }
+
+    if (owner->IsPvP())
+        SetPvP(true);
 
     AIM_Initialize();
     map->Add((Creature*)this);
@@ -726,7 +726,7 @@ void Pet::Update(uint32 update_diff, uint32 diff)
 
 void Pet::RegenerateAll(uint32 update_diff, bool skipCombatCheck)
 {
-    if (m_regenTimer <= update_diff)
+    if (m_regenTimer <= static_cast<int64>(update_diff))
     {
         if (!IsInCombat() || IsPolymorphed())
             RegenerateHealth();
@@ -1362,10 +1362,11 @@ bool Pet::InitStatsForLevel(uint32 petlevel, Unit* owner)
     }
 
     SetLevel(petlevel);
+    SetInitCreaturePowerType();
 
     // Before 1.9 pets retain their wild damage type
     if (sWorld.GetWowPatch() < WOW_PATCH_109 && sWorld.getConfig(CONFIG_BOOL_ACCURATE_PETS))
-        SetMeleeDamageSchool(SpellSchools(cinfo->dmg_school));
+        SetMeleeDamageSchool(SpellSchools(cinfo->damage_school));
     else
         SetMeleeDamageSchool(SPELL_SCHOOL_NORMAL);
 
@@ -1440,9 +1441,9 @@ bool Pet::InitStatsForLevel(uint32 petlevel, Unit* owner)
                 // donc pas de stats de pet.
                 DEBUG_LOG("Summoned pet (Entry: %u) not have pet stats data in DB", cinfo->entry);
 
-                // remove elite bonuses included in DB values
-                SetCreateHealth(uint32(((float(cinfo->health_max) / cinfo->level_max) / (1 + 2 * cinfo->rank)) * petlevel * healthMod));
-                SetCreateMana(uint32(((float(cinfo->mana_max)   / cinfo->level_max) / (1 + 2 * cinfo->rank)) * petlevel * healthMod));
+                // disregard template multiplier
+                SetCreateHealth(GetClassLevelStats()->health * healthMod);
+                SetCreateMana(GetClassLevelStats()->mana);
 
                 SetCreateStat(STAT_STRENGTH, 22);
                 SetCreateStat(STAT_AGILITY, 22);
@@ -1474,8 +1475,8 @@ bool Pet::InitStatsForLevel(uint32 petlevel, Unit* owner)
             {
                 sLog.outErrorDb("Hunter pet levelstats missing in DB");
 
-                // remove elite bonuses included in DB values
-                SetCreateHealth(uint32(((float(cinfo->health_max) / cinfo->level_max) / (1 + 2 * cinfo->rank)) * petlevel * healthMod));
+                // disregard template multiplier
+                SetCreateHealth(GetClassLevelStats()->health * healthMod);
 
                 SetCreateStat(STAT_STRENGTH, 22);
                 SetCreateStat(STAT_AGILITY, 22);
@@ -1492,15 +1493,18 @@ bool Pet::InitStatsForLevel(uint32 petlevel, Unit* owner)
 
             SetUInt32Value(UNIT_FIELD_FLAGS, cinfo->unit_flags);
 
-            SetCreateMana(cinfo->mana_max);
-            SetCreateHealth(cinfo->health_max * healthMod);
+            CreatureClassLevelStats const* pCLS = GetClassLevelStats();
+            SetCreateMana(pCLS->mana * cinfo->mana_multiplier);
+            SetCreateHealth(pCLS->health * cinfo->health_multiplier * healthMod);
 
             SetAttackTime(BASE_ATTACK, cinfo->base_attack_time);
             SetAttackTime(OFF_ATTACK, cinfo->base_attack_time);
             SetAttackTime(RANGED_ATTACK, cinfo->ranged_attack_time);
 
-            SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, damageMod * cinfo->dmg_min);
-            SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, damageMod * cinfo->dmg_max);
+            float const meleeDamageAverage = pCLS->melee_damage * cinfo->damage_multiplier * damageMod;
+            float const meleeDamageVariance = meleeDamageAverage * cinfo->damage_variance;
+            SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, meleeDamageAverage - meleeDamageVariance);
+            SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, meleeDamageAverage + meleeDamageVariance);
             break;
         }
         default:
@@ -2264,6 +2268,7 @@ bool Pet::Create(uint32 guidlow, CreatureCreatePos& cPos, CreatureInfo const* ci
     if (!cPos.Relocate(this))
         return false;
 
+    SetDefaultGossipMenuId(cinfo->gossip_menu_id);
     SetSheath(SHEATH_STATE_MELEE);
     SetByteValue(UNIT_FIELD_BYTES_2, UNIT_BYTES_2_OFFSET_MISC_FLAGS, UNIT_BYTE2_FLAG_UNK3 | UNIT_BYTE2_FLAG_AURAS | UNIT_BYTE2_FLAG_UNK5);
 
