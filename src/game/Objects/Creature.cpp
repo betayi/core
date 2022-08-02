@@ -1714,7 +1714,7 @@ bool Creature::CreateFromProto(uint32 guidlow, CreatureInfo const* cinfo, uint32
     return UpdateEntry(cinfo->entry, data, eventData, false);
 }
 
-bool Creature::LoadFromDB(uint32 guidlow, Map* map)
+bool Creature::LoadFromDB(uint32 guidlow, Map* map, bool force)
 {
     CreatureData const* data = sObjectMgr.GetCreatureData(guidlow);
 
@@ -1723,7 +1723,8 @@ bool Creature::LoadFromDB(uint32 guidlow, Map* map)
         sLog.outErrorDb("Creature (GUID: %u) not found in table `creature`, can't load. ", guidlow);
         return false;
     }
-    if (data->spawn_flags & SPAWN_FLAG_DISABLED)
+
+    if (!force && (data->spawn_flags & SPAWN_FLAG_DISABLED))
         return false;
 
     uint32 const creatureId = data->ChooseCreatureId();
@@ -2521,6 +2522,9 @@ void Creature::SaveRespawnTime()
 
 bool Creature::IsOutOfThreatArea(Unit* pVictim) const
 {
+    if (HasExtraFlag(CREATURE_FLAG_EXTRA_NO_LEASH_EVADE))
+        return false;
+
     // In dungeons, there is no threat area limit - only for active creatures (technical limitation, non actives are not updated without players around them)
     if (GetMap()->IsDungeon())
         return false;

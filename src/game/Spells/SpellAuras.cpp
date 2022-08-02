@@ -1713,6 +1713,22 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                         }
                         return;
                     }
+                    case 12623:                             // Suppression
+                    {
+                        if (Creature* pCreature = target->ToCreature())
+                        {
+                            // Using script command to avoid including EventAI header.
+                            ScriptInfo si;
+                            si.command = SCRIPT_COMMAND_SET_PHASE;
+                            si.setPhase.phase = 1;
+                            if (apply)
+                                si.setPhase.mode = SO_SETPHASE_INCREMENT;
+                            else
+                                si.setPhase.mode = SO_SETPHASE_DECREMENT;
+                            pCreature->GetMap()->ScriptCommandStartDirect(si, pCreature, pCreature);
+                        }
+                        return;
+                    }
                     case 13139:                             // net-o-matic
                     {
                         // root to self part of (root_target->charge->root_self sequence
@@ -1737,6 +1753,13 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                     {
                         m_isPeriodic = true;
                         m_modifier.periodictime = urand(30, 90) * IN_MILLISECONDS;
+                        return;
+                    }
+                    case 21827: // Frostwolf Aura DND
+                    case 21863: // Alterac Ram Aura DND
+                    {
+                        m_isPeriodic = true;
+                        m_modifier.periodictime = 2 * IN_MILLISECONDS;
                         return;
                     }
                     case 26234:                             // Ragnaros Submerge Visual
@@ -1930,6 +1953,16 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                                 }
                             }
                         }
+                }
+                return;
+            }
+            case 21827:                                     // Frostwolf Aura DND
+            case 21863:                                     // Alterac Ram Aura DND
+            {
+                if (Creature* pCreature = ToCreature(GetCaster()))
+                {
+                    if (pCreature->IsAlive() && !pCreature->HasCreatureState(CSTATE_DESPAWNING))
+                        pCreature->DespawnOrUnsummon(2000);
                 }
                 return;
             }
@@ -6409,6 +6442,35 @@ void Aura::PeriodicDummyTick()
                         target->CastSpell(target, 16334, true); // Summon Spiteful Phantom
                     else
                         target->CastSpell(target, 16335, true); // Summon Wrath Phantom
+                    return;
+                }
+                case 21827:                                 // Frostwolf Aura DND
+                case 21863:                                 // Alterac Ram Aura DND
+                {
+                    if (Player* pPlayer = target->ToPlayer())
+                    {
+                        if (Creature* pRam = ToCreature(GetCaster()))
+                        {
+                            if (pPlayer->IsDead() || pRam->IsDead() ||
+                               !pRam->IsWithinDistInMap(pPlayer, 50.0f))
+                            {
+                                pRam->DespawnOrUnsummon(1000);
+                                GetHolder()->SetAuraDuration(1);
+                                return;
+                            }
+
+                            switch (pRam->GetMotionMaster()->GetCurrentMovementGeneratorType())
+                            {
+                                case IDLE_MOTION_TYPE:
+                                case RANDOM_MOTION_TYPE:
+                                case WAYPOINT_MOTION_TYPE:
+                                    pRam->GetMotionMaster()->MoveFollow(pPlayer, 3.0f, 0);
+                                    break;
+                            }
+                        }
+                        else // ram is gone somehow
+                            GetHolder()->SetAuraDuration(1);  
+                    }
                     return;
                 }
                 case 24596:                                 // Intoxicating Venom
